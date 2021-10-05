@@ -1,3 +1,7 @@
+ctx = $("#canvas").get()[0].getContext("2d");
+cHeight = $("#canvas").get()[0].height;
+cwidth = $("#canvas").get()[0].width;
+
 // Class: Board
 // Description: Represents the entire board. Keeps track of the current game
 class Board {
@@ -5,7 +9,8 @@ class Board {
         this.player = new Player("", 2); // Single player object on the board
         this.enemies = []; // list of enemies currently on the board
         this.obsticles = []; // list of obsticles currently on the board
-
+		this.width = $("#canvas").get()[0].width; //Width of the board is equal to width of canvas
+		this.rowHeight = $("#canvas").get()[0].height / 3;
         // draw the board
         this.redraw();
     }
@@ -15,7 +20,18 @@ class Board {
     redraw() {
         this.player.redraw();
         this.enemies.forEach(enemy=>{enemy.redraw();});
-        this.obsticles.forEach(obsticle=>{obsticle.redraw();})
+        this.obsticles.forEach(obsticle=>{obsticle.redraw();});
+		
+		//Draw the first dividing line
+		ctx.beginPath();
+		ctx.moveTo(0, this.rowHeight);
+		ctx.lineTo(this.width, this.rowHeight);
+		ctx.stroke();
+		//Draw the second dividing line
+		ctx.beginPath();
+		ctx.moveTo(0, this.rowHeight * 2);
+		ctx.lineTo(this.width, this.rowHeight * 2);
+		ctx.stroke();
     }
 }
 
@@ -30,7 +46,7 @@ class Entity {
     // Function: redraw
     // Description: Redraw this entity on the canvas
     redraw() {
-
+		
     }
 }
 
