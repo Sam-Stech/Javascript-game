@@ -1,3 +1,5 @@
+const NUM_ROWS = 3;
+
 // Class: Board
 // Description: Represents the entire board. Keeps track of the current game
 class Board {
@@ -5,7 +7,8 @@ class Board {
 		this.width = $("#canvas").get()[0].width; //Width of the board is equal to width of canvas
 		this.rowHeight = $("#canvas").get()[0].height / 3;
 		this.player = new Player(this.rowHeight, 2); // Single player object on the board
-        this.enemies = [new Enemy(this.width - this.rowHeight, 1, this.rowHeight)]; // list of enemies currently on the board
+		this.enemies = [new Enemy(this.width - this.rowHeight, this.getRandomRow(), this.rowHeight)]; // list of enemies currently on the board
+
         this.obsticles = []; // list of obsticles currently on the board
 		this.gameOver = false;
 		this.ctx = $("#canvas").get([0]).getContext("2d");
@@ -13,6 +16,11 @@ class Board {
         this.redraw();
 		$("#canvas").css("display", "block");
     }
+
+	//Generating a random row number between [1:NUM_ROWS] for enemy & obstacle initial generation position
+	getRandomRow() {
+		return (Math.floor(Math.random() * NUM_ROWS) * this.rowHeight);
+	}
 	
 	//Function: startGame
 	//Begins the animation and creates the necessary event handlers.
