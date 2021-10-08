@@ -1,37 +1,57 @@
-ctx = $("#canvas").get()[0].getContext("2d");
-cHeight = $("#canvas").get()[0].height;
-cwidth = $("#canvas").get()[0].width;
-
 // Class: Board
 // Description: Represents the entire board. Keeps track of the current game
 class Board {
     constructor() {
-        this.player = new Player("", 2); // Single player object on the board
-        this.enemies = []; // list of enemies currently on the board
-        this.obsticles = []; // list of obsticles currently on the board
 		this.width = $("#canvas").get()[0].width; //Width of the board is equal to width of canvas
 		this.rowHeight = $("#canvas").get()[0].height / 3;
+		this.player = new Player(this.rowHeight, 2); // Single player object on the board
+        this.enemies = [new Enemy(this.width - this.rowHeight, 1, this.rowHeight)]; // list of enemies currently on the board
+        this.obsticles = []; // list of obsticles currently on the board
+		this.gameOver = false;
+		this.ctx = $("#canvas").get([0]).getContext("2d");
         // draw the board
         this.redraw();
+		$("#canvas").css("display", "block");
     }
+	
+	//Function: startGame
+	//Begins the animation and creates the necessary event handlers.
+	startGame() {
+		console.log("Started game");
+		this.redraw();	
+	}
+	
+	//Function: addEnemy
+	//Description: adds the given enemy to the boards enemy list
+	addEnemy(enemy) {
+		this.push(enemy);
+	}
 
     // Function: redraw
     // Descrption: Redraws the entire board. Called whenever something moves
     redraw() {
-        this.player.redraw();
-        this.enemies.forEach(enemy=>{enemy.redraw();});
-        this.obsticles.forEach(obsticle=>{obsticle.redraw();});
+		console.log("Redrawing");
+		
+		this.ctx.beginPath();
+		this.ctx.rect(0,0, this.width, this.rowHeight * 3);
+		this.ctx.fillStyle = "white";
+		this.ctx.fill();
 		
 		//Draw the first dividing line
-		ctx.beginPath();
-		ctx.moveTo(0, this.rowHeight);
-		ctx.lineTo(this.width, this.rowHeight);
-		ctx.stroke();
+		this.ctx.beginPath();
+		this.ctx.moveTo(0, this.rowHeight);
+		this.ctx.lineTo(this.width, this.rowHeight);
+		this.ctx.stroke();
 		//Draw the second dividing line
-		ctx.beginPath();
-		ctx.moveTo(0, this.rowHeight * 2);
-		ctx.lineTo(this.width, this.rowHeight * 2);
-		ctx.stroke();
+		this.ctx.beginPath();
+		this.ctx.moveTo(0, this.rowHeight * 2);
+		this.ctx.lineTo(this.width, this.rowHeight * 2);
+		this.ctx.stroke();
+		
+		//Redraw enemies, players, and obsticles
+        this.player.redraw(0, this.rowHeight * (this.player.path - 1));
+        this.enemies.forEach(enemy=>{enemy.redraw();});
+        this.obsticles.forEach(obsticle=>{obsticle.redraw();});
     }
 }
 
@@ -53,27 +73,47 @@ class Entity {
 // Class: Player
 // Description: Represents the player unit on the board
 class Player extends Entity {
-    constructor(imgPath, startingPath) {
-        super(imgPath, startingPath);
+    constructor(dim, startingPath) {
+        super("./images/benny.png", startingPath);
+		this.img = document.getElementById("benny");
+		this.dim = dim;
     }
+	
+	redraw(x, y) {
+		var ctx = $("#canvas").get()[0].getContext("2d");
+		console.log("drawing player at 0 " + y);
+		ctx.drawImage(this.img, x, y, this.dim, this.dim);
+	}
 }
 
 // Class: NonPlayer
 // Description: Abstract class outlining common characteristics/functions for nonplayer units
 class NonPlayer extends Entity {
     constructor(imgPath) {
-        super(imgPath, Math.floor((Math.random() * 3) + 1));
+		console.log("called nonplayer constructor");
+        super(imgPath, 1); //Math.floor((Math.random() * 3) + 1)
     }
 }
 
 // Class: Enemy
 // Description: Represents a single enemy on the board
 class Enemy extends NonPlayer {
-    constructor() {
-        let possibleImages = [];
-        let enemyImage = possibleImages[Math.floor((Math.random() * (possibleImages.length)))];
+    constructor(x, y, dim) {
+		console.log("called enemy constructor");
+		console.log("canvas width " + x);
+		let possibleImages = [];
+        let enemyImage = "./images/enemy1.png" //possibleImages[Math.floor((Math.random() * (possibleImages.length)))];
         super( enemyImage );
+		this.img = document.getElementById("enemy1");
+		this.x = x;
+		this.y = y;
+		this.dim = dim;
     }
+	
+	redraw() {
+		var ctx = $("#canvas").get()[0].getContext("2d");
+		ctx.drawImage(this.img, this.x-=10, this.y, this.dim, this.dim); //Updates characters position by 10
+	}
 }
 
 // Class: Obsticle
