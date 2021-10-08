@@ -7,4 +7,11 @@ $(document).ready(function() {
 
 	// Make the board
 	let board = new Board();
-});
+	requestAnimationFrame(gameLoop);
+	
+	function gameLoop() {
+		board.redraw();
+		requestAnimationFrame(gameLoop);
+	}
+	});
+	
