@@ -28,10 +28,11 @@ class Board {
 	}
 
     // Function: redraw
-    // Descrption: Redraws the entire board. Called whenever something moves
+    // Description: Redraws the entire board. Called whenever something moves
     redraw() {
 		console.log("Redrawing");
 		
+		//Redraw white background
 		this.ctx.beginPath();
 		this.ctx.rect(0,0, this.width, this.rowHeight * 3);
 		this.ctx.fillStyle = "white";
@@ -48,8 +49,9 @@ class Board {
 		this.ctx.lineTo(this.width, this.rowHeight * 2);
 		this.ctx.stroke();
 		
+		console.log(this.player.path);
 		//Redraw enemies, players, and obsticles
-        this.player.redraw(0, this.rowHeight * (this.player.path - 1));
+        this.player.redraw(0, this.rowHeight * (this.player.row - 1));
         this.enemies.forEach(enemy=>{enemy.redraw();});
         this.obsticles.forEach(obsticle=>{obsticle.redraw();});
     }
@@ -60,13 +62,19 @@ class Board {
 class Entity {
     constructor(imgPath, startingPath) {
         this.imgPath = imgPath;
-        this.path = startingPath;
+        this.row = startingPath;
     }
 
     // Function: redraw
     // Description: Redraw this entity on the canvas
     redraw() {
-		
+		var img = new Image();
+        img.src = this.imgPath;
+        var tempPos = this.pos;
+        img.onload = function() {
+            ctx.drawImage(img, tempPos[0], tempPos[1]);
+        }
+        console.log("Drawing Enemy at " + tempPos[0] + " - " + tempPos[1]);
     }
 }
 
@@ -116,9 +124,9 @@ class Enemy extends NonPlayer {
 	}
 }
 
-// Class: Obsticle
-// Description: Represents a single obsticle on the board
-class Obsticle extends NonPlayer {
+// Class: Obstacle
+// Description: Represents a single obstacle on the board
+class Obstacle extends NonPlayer {
     constructor() {
         let possibleImages = [];
         let enemyImage = possibleImages[Math.floor((Math.random() * (possibleImages.length)))];

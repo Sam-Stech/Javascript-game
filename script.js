@@ -1,4 +1,3 @@
-
 $(document).ready(function() {
 	// Set the dimensions of the canvas
 	let canvasWidth = window.innerWidth - 50;
@@ -8,6 +7,4 @@ $(document).ready(function() {
 
 	// Make the board
 	let board = new Board();
-	
-	
 });
