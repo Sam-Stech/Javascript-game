@@ -6,21 +6,17 @@ class Board {
     constructor() {
 		this.width = $("#canvas").get()[0].width; //Width of the board is equal to width of canvas
 		this.rowHeight = $("#canvas").get()[0].height / 3;
-		this.player = new Player(this.rowHeight, 2); // Single player object on the board
-		this.enemies = [new Enemy(this.width - this.rowHeight, this.getRandomRow(), this.rowHeight)]; // list of enemies currently on the board
+		this.player = new Player(1); // Single player object on the board
+		this.enemies = [new Enemy()]; // list of enemies currently on the board
 
-        this.obsticles = []; // list of obsticles currently on the board
+        this.obstacles = []; // list of obstacles currently on the board
 		this.gameOver = false;
 		this.ctx = $("#canvas").get([0]).getContext("2d");
+
         // draw the board
         this.redraw();
 		$("#canvas").css("display", "block");
     }
-
-	//Generating a random row number between [1:NUM_ROWS] for enemy & obstacle initial generation position
-	getRandomRow() {
-		return (Math.floor(Math.random() * NUM_ROWS) * this.rowHeight);
-	}
 	
 	//Function: startGame
 	//Begins the animation and creates the necessary event handlers.
@@ -38,7 +34,7 @@ class Board {
     // Function: redraw
     // Description: Redraws the entire board. Called whenever something moves
     redraw() {
-		console.log("Redrawing");
+		// console.log("Redrawing");
 		
 		//Redraw white background
 		this.ctx.beginPath();
@@ -58,10 +54,15 @@ class Board {
 		this.ctx.stroke();
 		
 		console.log(this.player.path);
-		//Redraw enemies, players, and obsticles
-        this.player.redraw(0, this.rowHeight * (this.player.row - 1));
-        this.enemies.forEach(enemy=>{enemy.redraw();});
-        this.obsticles.forEach(obsticle=>{obsticle.redraw();});
+		//Redraw enemies, players, and obstacles
+        this.player.redraw();
+        for ( let i=0; i < this.enemies.length; i++ ) {
+			this.enemies[i].x-=10;
+            this.enemies[i].redraw();
+        }
+		for ( let i=0; i < this.obstacles.length; i++ ) {
+            this.obstacles[i].redraw();
+        }
     }
 }
 
@@ -71,35 +72,33 @@ class Entity {
     constructor(imgPath, startingPath) {
         this.imgPath = imgPath;
         this.row = startingPath;
+		this.rowHeight = $("#canvas").get()[0].height / 3;
+		this.dim = this.rowHeight - 5;
     }
 
     // Function: redraw
     // Description: Redraw this entity on the canvas
     redraw() {
-		var img = new Image();
-        img.src = this.imgPath;
-        var tempPos = this.pos;
-        img.onload = function() {
-            ctx.drawImage(img, tempPos[0], tempPos[1]);
-        }
-        console.log("Drawing Enemy at " + tempPos[0] + " - " + tempPos[1]);
+		var ctx = $("#canvas").get()[0].getContext("2d");
+		// var img = new Image();
+        // img.src = this.imgPath;
+        var tempPos = [this.x, this.row * this.rowHeight + 2.5];
+		var tempDim = this.dim;
+        // img.onload = function() {
+        //     ctx.drawImage(img, tempPos[0], tempPos[1], tempDim, tempDim);
+        // }
+		ctx.drawImage(this.img, tempPos[0], tempPos[1], tempDim, tempDim);
     }
 }
 
 // Class: Player
 // Description: Represents the player unit on the board
 class Player extends Entity {
-    constructor(dim, startingPath) {
+    constructor(startingPath) {
         super("./images/benny.png", startingPath);
 		this.img = document.getElementById("benny");
-		this.dim = dim;
+		this.x = 0;
     }
-	
-	redraw(x, y) {
-		var ctx = $("#canvas").get()[0].getContext("2d");
-		console.log("drawing player at 0 " + y);
-		ctx.drawImage(this.img, x, y, this.dim, this.dim);
-	}
 }
 
 // Class: NonPlayer
@@ -107,29 +106,22 @@ class Player extends Entity {
 class NonPlayer extends Entity {
     constructor(imgPath) {
 		console.log("called nonplayer constructor");
-        super(imgPath, 1); //Math.floor((Math.random() * 3) + 1)
+        super(imgPath, Math.floor(Math.random() * NUM_ROWS));
+		this.x = $("#canvas").get()[0].width - $("#canvas").get()[0].height / 3;
     }
 }
 
 // Class: Enemy
 // Description: Represents a single enemy on the board
 class Enemy extends NonPlayer {
-    constructor(x, y, dim) {
+    constructor() {
 		console.log("called enemy constructor");
-		console.log("canvas width " + x);
-		let possibleImages = [];
-        let enemyImage = "./images/enemy1.png" //possibleImages[Math.floor((Math.random() * (possibleImages.length)))];
+		let possibleImages = ["./images/enemy1.png"];
+        let enemyImage = possibleImages[Math.floor((Math.random() * (possibleImages.length)))];
+
         super( enemyImage );
 		this.img = document.getElementById("enemy1");
-		this.x = x;
-		this.y = y;
-		this.dim = dim;
     }
-	
-	redraw() {
-		var ctx = $("#canvas").get()[0].getContext("2d");
-		ctx.drawImage(this.img, this.x-=10, this.y, this.dim, this.dim); //Updates characters position by 10
-	}
 }
 
 // Class: Obstacle

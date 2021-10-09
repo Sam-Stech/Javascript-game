@@ -11,7 +11,10 @@ $(document).ready(function() {
 	
 	function gameLoop() {
 		board.redraw();
-		requestAnimationFrame(gameLoop);
+
+		if ( !board.gameOver ) {
+			requestAnimationFrame(gameLoop);
+		}
 	}
-	});
+});
 	
