@@ -35,9 +35,6 @@ class Board {
     // Description: Redraws the entire board. Called whenever something moves
     redraw() {
 		// console.log("Redrawing");
-		
-
-		
 		//Draw the first dividing line
 		this.ctx.beginPath();
 		this.ctx.moveTo(0, this.rowHeight);
@@ -53,10 +50,16 @@ class Board {
 		//Redraw enemies, players, and obstacles
         this.player.redraw();
         for ( let i=0; i < this.enemies.length; i++ ) {
+			this.ctx.clearRect(this.enemies[i].x, 
+				this.enemies[i].row * this.enemies[i].rowHeight + 2.5,
+				this.enemies[i].dim + 3, this.enemies[i].dim);
 			this.enemies[i].x-=10;
             this.enemies[i].redraw();
         }
 		for ( let i=0; i < this.obstacles.length; i++ ) {
+			this.ctx.clearRect(this.obstacles[i].x, 
+				this.obstacles[i].row * this.obstacles[i].rowHeight + 2.5,
+				this.obstacles[i].dim + 3, this.obstacles[i].dim);
             this.obstacles[i].redraw();
         }
     }
