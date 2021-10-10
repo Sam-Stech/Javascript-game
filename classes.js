@@ -11,7 +11,7 @@ class Board {
 		this.ctx = $("#canvas").get([0]).getContext("2d");
         // draw the board
         this.redraw();
-		$("#canvas").css("display", "block");
+		$("#canvas").css("display", "inline-block");
     }
 	
 	//Function: startGame
@@ -32,11 +32,7 @@ class Board {
     redraw() {
 		console.log("Redrawing");
 		
-		//Redraw white background
-		this.ctx.beginPath();
-		this.ctx.rect(0,0, this.width, this.rowHeight * 3);
-		this.ctx.fillStyle = "white";
-		this.ctx.fill();
+
 		
 		//Draw the first dividing line
 		this.ctx.beginPath();

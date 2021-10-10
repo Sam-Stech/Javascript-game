@@ -1,7 +1,23 @@
 body {
     text-align: center;
 }
+#container{
+    margin: 0 auto;
+	padding: 0px;
+    position:relative; 
+}
 
 #canvas {
     border: 1px solid black;
+	top:0; 
+	left:0;
+	position:relative;
+	margin-right:300px;
+    z-index:20;
+}
+#background{
+	top:0; 
+	left:0;
+	position:absolute;
+	z-index:1;
 }

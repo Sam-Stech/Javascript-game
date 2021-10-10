@@ -4,6 +4,12 @@ $(document).ready(function() {
 	let canvasHeight = window.innerHeight - 50;
 	$("#canvas").attr("width", canvasWidth);
 	$("#canvas").attr("height", canvasHeight);
+	$("#canvas").attr("margin-right", -canvasWidth);
+	document.getElementById("canvas").style.background = "transparent";
+	$("#container").attr("width", canvasWidth);
+	$("#container").attr("height", canvasHeight/2);
+	$("#background").attr("width", canvasWidth);
+	$("#background").attr("height", canvasHeight);
 
 	// Make the board
 	let board = new Board();
