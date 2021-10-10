@@ -8,8 +8,7 @@ class Board {
 		this.rowHeight = $("#canvas").get()[0].height / 3;
 		this.player = new Player(1); // Single player object on the board
 		this.enemies = [new Enemy()]; // list of enemies currently on the board
-
-        this.obstacles = []; // list of obstacles currently on the board
+        this.obstacles = [new Obstacle()]; // list of obstacles currently on the board
 		this.gameOver = false;
 		this.playerBlocked = false;
 		this.ctx = $("#canvas").get([0]).getContext("2d");
@@ -87,6 +86,7 @@ class Board {
 				 this.enemies[i].x > this.player.x && 
 				 this.enemies[i].x < (this.player.x + this.player.dim) ) {
 				this.gameOver = true;
+				// TODO: Any more events that should happen after hitting an enemy go here
 			}
 			// Out-of-bounds check
 			if ( this.enemies[i].x < (0 - this.enemies[i].dim) ) {
@@ -101,17 +101,36 @@ class Board {
 		}
 
 		// Update Obstacles:
+		var obstaclesToDelete = [];
 		for ( let i=0; i < this.obstacles.length; i++ ) {
-            this.obstacles[i].update(delta);
+			this.obstacles[i].update(delta);
+
+			// Collision Check
+			if ( this.obstacles[i].row == this.player.row &&
+				 this.obstacles[i].x > this.player.x && 
+				 this.obstacles[i].x < (this.player.x + this.player.dim) ) {
+				this.playerBlocked = true;
+				// TODO: Any more events that should happen after hitting an obstacle go here
+			}
+			// Out-of-bounds check
+			if ( this.obstacles[i].x < (0 - this.obstacles[i].dim) ) {
+				// Since we're looping through the array of obstacles right now, we don't want to delete the enemy just yet
+				// So mark it for deletion so that we can delete it after exiting the loop
+				obstaclesToDelete.push(i);
+			}
         }
+		// Perform our deletions
+		for ( let i= obstaclesToDelete.length - 1; i >=0; i-- ) {
+			this.obstacles.splice(obstaclesToDelete[i], 1);
+		}
 	}
 }
 
 // Class: Entity
 // Description: Abstract class representing an entity on the board. Could be a player or non-player
 class Entity {
-    constructor(imgPath, startingPath) {
-        this.imgPath = imgPath;
+    constructor(img, startingPath) {
+        this.img = img;
         this.row = startingPath;
 		this.rowHeight = $("#canvas").get()[0].height / 3;
 		this.dim = this.rowHeight - 5;
@@ -130,8 +149,7 @@ class Entity {
 // Description: Represents the player unit on the board
 class Player extends Entity {
     constructor(startingPath) {
-        super("./images/benny.png", startingPath);
-		this.img = document.getElementById("benny");
+        super(document.getElementById("benny"), startingPath);
 		this.x = 0;
     }
 }
@@ -139,9 +157,9 @@ class Player extends Entity {
 // Class: NonPlayer
 // Description: Abstract class outlining common characteristics/functions for nonplayer units
 class NonPlayer extends Entity {
-    constructor(imgPath) {
+    constructor(img) {
 		console.log("called nonplayer constructor");
-        super(imgPath, Math.floor(Math.random() * NUM_ROWS));
+        super(img, Math.floor(Math.random() * NUM_ROWS));
 		// this.x = $("#canvas").get()[0].width - $("#canvas").get()[0].height / 3;
 		this.x = $("#canvas").get()[0].width;
     }
@@ -159,11 +177,10 @@ class NonPlayer extends Entity {
 class Enemy extends NonPlayer {
     constructor() {
 		console.log("called enemy constructor");
-		let possibleImages = ["./images/enemy1.png"];
+		let possibleImages = [document.getElementById("enemy1")];
         let enemyImage = possibleImages[Math.floor((Math.random() * (possibleImages.length)))];
 
         super( enemyImage );
-		this.img = document.getElementById("enemy1");
 		this.velocity = -0.08;
     }
 }
@@ -172,9 +189,9 @@ class Enemy extends NonPlayer {
 // Description: Represents a single obstacle on the board
 class Obstacle extends NonPlayer {
     constructor() {
-        let possibleImages = [];
-        let enemyImage = possibleImages[Math.floor((Math.random() * (possibleImages.length)))];
-        super( enemyImage );
+        let possibleImages = [document.getElementById("wall")];
+        let obstacleImage = possibleImages[Math.floor((Math.random() * (possibleImages.length)))];
+        super( obstacleImage );
 		this.velocity = -0.08;
     }
 }
