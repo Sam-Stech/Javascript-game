@@ -11,6 +11,7 @@ class Board {
 
         this.obstacles = []; // list of obstacles currently on the board
 		this.gameOver = false;
+		this.playerBlocked = false;
 		this.ctx = $("#canvas").get([0]).getContext("2d");
 
         // draw the board
@@ -64,6 +65,46 @@ class Board {
             this.obstacles[i].redraw();
         }
     }
+
+	// Function: update
+	// Input: delta - the amount of time that has passed since the last update
+	// Description: Calls the corresponding update functions for all things that need to update as time passes
+	//				Then checks if a collision has occured, or if an entity has gone off screen
+	update(delta) {
+		// If the player is blocked: don't bother updating
+		if ( this.playerBlocked ) {
+			return;
+		}
+
+		// Update the non-players... and check if they now have a collision or are out of bounds
+		// Update Enemies:
+		var enemiesToDelete = [];
+		for ( let i=0; i < this.enemies.length; i++ ) {
+			this.enemies[i].update(delta);
+
+			// Collision Check
+			if ( this.enemies[i].row == this.player.row &&
+				 this.enemies[i].x > this.player.x && 
+				 this.enemies[i].x < (this.player.x + this.player.dim) ) {
+				this.gameOver = true;
+			}
+			// Out-of-bounds check
+			if ( this.enemies[i].x < (0 - this.enemies[i].dim) ) {
+				// Since we're looping through the array of enemies right now, we don't want to delete the enemy just yet
+				// So mark it for deletion so that we can delete it after exiting the loop
+				enemiesToDelete.push(i);
+			}
+        }
+		// Perform our deletions
+		for ( let i= enemiesToDelete.length - 1; i >=0; i-- ) {
+			this.enemies.splice(enemiesToDelete[i], 1);
+		}
+
+		// Update Obstacles:
+		for ( let i=0; i < this.obstacles.length; i++ ) {
+            this.obstacles[i].update(delta);
+        }
+	}
 }
 
 // Class: Entity
@@ -80,14 +121,8 @@ class Entity {
     // Description: Redraw this entity on the canvas
     redraw() {
 		var ctx = $("#canvas").get()[0].getContext("2d");
-		// var img = new Image();
-        // img.src = this.imgPath;
-        var tempPos = [this.x, this.row * this.rowHeight + 2.5];
-		var tempDim = this.dim;
-        // img.onload = function() {
-        //     ctx.drawImage(img, tempPos[0], tempPos[1], tempDim, tempDim);
-        // }
-		ctx.drawImage(this.img, tempPos[0], tempPos[1], tempDim, tempDim);
+        var pos = [this.x, this.row * this.rowHeight + 2.5];
+		ctx.drawImage(this.img, pos[0], pos[1], this.dim, this.dim);
     }
 }
 
@@ -107,8 +142,16 @@ class NonPlayer extends Entity {
     constructor(imgPath) {
 		console.log("called nonplayer constructor");
         super(imgPath, Math.floor(Math.random() * NUM_ROWS));
-		this.x = $("#canvas").get()[0].width - $("#canvas").get()[0].height / 3;
+		// this.x = $("#canvas").get()[0].width - $("#canvas").get()[0].height / 3;
+		this.x = $("#canvas").get()[0].width;
     }
+
+	// Function: update
+	// Input: delta - the time since the last update
+	// Description: updates the position of the entity based on delta and its velocity
+	update(delta) {
+		this.x += this.velocity * delta;
+	}
 }
 
 // Class: Enemy
@@ -121,6 +164,7 @@ class Enemy extends NonPlayer {
 
         super( enemyImage );
 		this.img = document.getElementById("enemy1");
+		this.velocity = -0.08;
     }
 }
 
@@ -131,5 +175,6 @@ class Obstacle extends NonPlayer {
         let possibleImages = [];
         let enemyImage = possibleImages[Math.floor((Math.random() * (possibleImages.length)))];
         super( enemyImage );
+		this.velocity = -0.08;
     }
 }
