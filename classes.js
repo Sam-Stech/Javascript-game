@@ -1,14 +1,18 @@
+const NUM_ROWS = 3;
+
 // Class: Board
 // Description: Represents the entire board. Keeps track of the current game
 class Board {
     constructor() {
 		this.width = $("#canvas").get()[0].width; //Width of the board is equal to width of canvas
 		this.rowHeight = $("#canvas").get()[0].height / 3;
-		this.player = new Player(this.rowHeight, 2); // Single player object on the board
-        this.enemies = [new Enemy(this.width - this.rowHeight, 1, this.rowHeight)]; // list of enemies currently on the board
-        this.obsticles = []; // list of obsticles currently on the board
+		this.player = new Player(1); // Single player object on the board
+		this.enemies = [new Enemy()]; // list of enemies currently on the board
+        this.obstacles = [new Obstacle()]; // list of obstacles currently on the board
 		this.gameOver = false;
+		this.playerBlocked = false;
 		this.ctx = $("#canvas").get([0]).getContext("2d");
+
         // draw the board
         this.redraw();
 		$("#canvas").css("display", "inline-block");
@@ -30,7 +34,7 @@ class Board {
     // Function: redraw
     // Description: Redraws the entire board. Called whenever something moves
     redraw() {
-		console.log("Redrawing");
+		// console.log("Redrawing");
 		
 
 		
@@ -46,86 +50,144 @@ class Board {
 		this.ctx.stroke();
 		
 		console.log(this.player.path);
-		//Redraw enemies, players, and obsticles
-        this.player.redraw(0, this.rowHeight * (this.player.row - 1));
-        this.enemies.forEach(enemy=>{enemy.redraw();});
-        this.obsticles.forEach(obsticle=>{obsticle.redraw();});
+		//Redraw enemies, players, and obstacles
+        this.player.redraw();
+        for ( let i=0; i < this.enemies.length; i++ ) {
+			this.enemies[i].x-=10;
+            this.enemies[i].redraw();
+        }
+		for ( let i=0; i < this.obstacles.length; i++ ) {
+            this.obstacles[i].redraw();
+        }
     }
+
+	// Function: update
+	// Input: delta - the amount of time that has passed since the last update
+	// Description: Calls the corresponding update functions for all things that need to update as time passes
+	//				Then checks if a collision has occured, or if an entity has gone off screen
+	update(delta) {
+		// If the player is blocked: don't bother updating
+		if ( this.playerBlocked ) {
+			return;
+		}
+
+		// Update the non-players... and check if they now have a collision or are out of bounds
+		// Update Enemies:
+		var enemiesToDelete = [];
+		for ( let i=0; i < this.enemies.length; i++ ) {
+			this.enemies[i].update(delta);
+
+			// Collision Check
+			if ( this.enemies[i].row == this.player.row &&
+				 this.enemies[i].x > this.player.x && 
+				 this.enemies[i].x < (this.player.x + this.player.dim) ) {
+				this.gameOver = true;
+				// TODO: Any more events that should happen after hitting an enemy go here
+			}
+			// Out-of-bounds check
+			if ( this.enemies[i].x < (0 - this.enemies[i].dim) ) {
+				// Since we're looping through the array of enemies right now, we don't want to delete the enemy just yet
+				// So mark it for deletion so that we can delete it after exiting the loop
+				enemiesToDelete.push(i);
+			}
+        }
+		// Perform our deletions
+		for ( let i= enemiesToDelete.length - 1; i >=0; i-- ) {
+			this.enemies.splice(enemiesToDelete[i], 1);
+		}
+
+		// Update Obstacles:
+		var obstaclesToDelete = [];
+		for ( let i=0; i < this.obstacles.length; i++ ) {
+			this.obstacles[i].update(delta);
+
+			// Collision Check
+			if ( this.obstacles[i].row == this.player.row &&
+				 this.obstacles[i].x > this.player.x && 
+				 this.obstacles[i].x < (this.player.x + this.player.dim) ) {
+				this.playerBlocked = true;
+				// TODO: Any more events that should happen after hitting an obstacle go here
+			}
+			// Out-of-bounds check
+			if ( this.obstacles[i].x < (0 - this.obstacles[i].dim) ) {
+				// Since we're looping through the array of obstacles right now, we don't want to delete the enemy just yet
+				// So mark it for deletion so that we can delete it after exiting the loop
+				obstaclesToDelete.push(i);
+			}
+        }
+		// Perform our deletions
+		for ( let i= obstaclesToDelete.length - 1; i >=0; i-- ) {
+			this.obstacles.splice(obstaclesToDelete[i], 1);
+		}
+	}
 }
 
 // Class: Entity
 // Description: Abstract class representing an entity on the board. Could be a player or non-player
 class Entity {
-    constructor(imgPath, startingPath) {
-        this.imgPath = imgPath;
+    constructor(img, startingPath) {
+        this.img = img;
         this.row = startingPath;
+		this.rowHeight = $("#canvas").get()[0].height / 3;
+		this.dim = this.rowHeight - 5;
     }
 
     // Function: redraw
     // Description: Redraw this entity on the canvas
     redraw() {
-		var img = new Image();
-        img.src = this.imgPath;
-        var tempPos = this.pos;
-        img.onload = function() {
-            ctx.drawImage(img, tempPos[0], tempPos[1]);
-        }
-        console.log("Drawing Enemy at " + tempPos[0] + " - " + tempPos[1]);
+		var ctx = $("#canvas").get()[0].getContext("2d");
+        var pos = [this.x, this.row * this.rowHeight + 2.5];
+		ctx.drawImage(this.img, pos[0], pos[1], this.dim, this.dim);
     }
 }
 
 // Class: Player
 // Description: Represents the player unit on the board
 class Player extends Entity {
-    constructor(dim, startingPath) {
-        super("./images/benny.png", startingPath);
-		this.img = document.getElementById("benny");
-		this.dim = dim;
+    constructor(startingPath) {
+        super(document.getElementById("benny"), startingPath);
+		this.x = 0;
     }
-	
-	redraw(x, y) {
-		var ctx = $("#canvas").get()[0].getContext("2d");
-		console.log("drawing player at 0 " + y);
-		ctx.drawImage(this.img, x, y, this.dim, this.dim);
-	}
 }
 
 // Class: NonPlayer
 // Description: Abstract class outlining common characteristics/functions for nonplayer units
 class NonPlayer extends Entity {
-    constructor(imgPath) {
+    constructor(img) {
 		console.log("called nonplayer constructor");
-        super(imgPath, 1); //Math.floor((Math.random() * 3) + 1)
+        super(img, Math.floor(Math.random() * NUM_ROWS));
+		// this.x = $("#canvas").get()[0].width - $("#canvas").get()[0].height / 3;
+		this.x = $("#canvas").get()[0].width;
     }
+
+	// Function: update
+	// Input: delta - the time since the last update
+	// Description: updates the position of the entity based on delta and its velocity
+	update(delta) {
+		this.x += this.velocity * delta;
+	}
 }
 
 // Class: Enemy
 // Description: Represents a single enemy on the board
 class Enemy extends NonPlayer {
-    constructor(x, y, dim) {
+    constructor() {
 		console.log("called enemy constructor");
-		console.log("canvas width " + x);
-		let possibleImages = [];
-        let enemyImage = "./images/enemy1.png" //possibleImages[Math.floor((Math.random() * (possibleImages.length)))];
+		let possibleImages = [document.getElementById("enemy1")];
+        let enemyImage = possibleImages[Math.floor((Math.random() * (possibleImages.length)))];
+
         super( enemyImage );
-		this.img = document.getElementById("enemy1");
-		this.x = x;
-		this.y = y;
-		this.dim = dim;
+		this.velocity = -0.08;
     }
-	
-	redraw() {
-		var ctx = $("#canvas").get()[0].getContext("2d");
-		ctx.drawImage(this.img, this.x-=10, this.y, this.dim, this.dim); //Updates characters position by 10
-	}
 }
 
 // Class: Obstacle
 // Description: Represents a single obstacle on the board
 class Obstacle extends NonPlayer {
     constructor() {
-        let possibleImages = [];
-        let enemyImage = possibleImages[Math.floor((Math.random() * (possibleImages.length)))];
-        super( enemyImage );
+        let possibleImages = [document.getElementById("wall")];
+        let obstacleImage = possibleImages[Math.floor((Math.random() * (possibleImages.length)))];
+        super( obstacleImage );
+		this.velocity = -0.08;
     }
 }
