@@ -7,6 +7,7 @@ class Board {
 		this.width = $("#canvas").get()[0].width; //Width of the board is equal to width of canvas
 		this.rowHeight = $("#canvas").get()[0].height / 3;
 		this.player = new Player(1); // Single player object on the board
+		console.log(this.player.row);
 		this.enemies = [new Enemy()]; // list of enemies currently on the board
         this.obstacles = [new Obstacle()]; // list of obstacles currently on the board
 		this.gameOver = false;
@@ -16,6 +17,19 @@ class Board {
         // draw the board
         this.redraw();
 		$("#canvas").css("display", "inline-block");
+		
+		var currentBoard = this;
+		document.addEventListener("keydown", function(e) {
+			currentBoard.ctx.clearRect(currentBoard.player.x, currentBoard.player.row * currentBoard.player.rowHeight + 2.5,
+				currentBoard.player.dim, currentBoard.player.dim);
+			if (e.code == "ArrowUp" && currentBoard.player.row > 0) {
+				currentBoard.player.row -= 1;
+			} else if (e.code == "ArrowDown" && currentBoard.player.row < 2) {
+				currentBoard.player.row += 1;
+			}
+			
+			currentBoard.player.redraw();
+		});
     }
 	
 	//Function: startGame
@@ -46,7 +60,6 @@ class Board {
 		this.ctx.lineTo(this.width, this.rowHeight * 2);
 		this.ctx.stroke();
 		
-		console.log(this.player.path);
 		//Redraw enemies, players, and obstacles
         this.player.redraw();
         for ( let i=0; i < this.enemies.length; i++ ) {
@@ -148,8 +161,10 @@ class Entity {
 // Description: Represents the player unit on the board
 class Player extends Entity {
     constructor(startingPath) {
+		console.log("called player constructor.");
         super(document.getElementById("benny"), startingPath);
 		this.x = 0;
+		console.log(this.row);
     }
 }
 
@@ -157,7 +172,6 @@ class Player extends Entity {
 // Description: Abstract class outlining common characteristics/functions for nonplayer units
 class NonPlayer extends Entity {
     constructor(img) {
-		console.log("called nonplayer constructor");
         super(img, Math.floor(Math.random() * NUM_ROWS));
 		// this.x = $("#canvas").get()[0].width - $("#canvas").get()[0].height / 3;
 		this.x = $("#canvas").get()[0].width;
@@ -175,7 +189,6 @@ class NonPlayer extends Entity {
 // Description: Represents a single enemy on the board
 class Enemy extends NonPlayer {
     constructor() {
-		console.log("called enemy constructor");
 		let possibleImages = [document.getElementById("enemy1")];
         let enemyImage = possibleImages[Math.floor((Math.random() * (possibleImages.length)))];
 
