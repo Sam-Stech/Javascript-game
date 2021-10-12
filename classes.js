@@ -20,15 +20,48 @@ class Board {
 		
 		var currentBoard = this;
 		document.addEventListener("keydown", function(e) {
+			//remove after image
 			currentBoard.ctx.clearRect(currentBoard.player.x, currentBoard.player.row * currentBoard.player.rowHeight + 2.5,
 				currentBoard.player.dim, currentBoard.player.dim);
+			//
+			var pressedMovementKey = true;
+			var startingRow = currentBoard.player.row;
+			
+			//check what the user did
 			if (e.code == "ArrowUp" && currentBoard.player.row > 0) {
 				currentBoard.player.row -= 1;
 			} else if (e.code == "ArrowDown" && currentBoard.player.row < 2) {
 				currentBoard.player.row += 1;
+			} else {
+				pressedMovementKey = false;
 			}
 			
-			currentBoard.player.redraw();
+			if (pressedMovementKey) {
+				
+				var playerCurrentlyBlocked = currentBoard.playerBlocked;
+				var playerWillBeBlocked = false;
+				//Check if the player will be blocked in their new row.
+				for ( let i=0; i < currentBoard.obstacles.length; i++ ) {
+					if ( currentBoard.obstacles[i].row == currentBoard.player.row &&
+						 currentBoard.obstacles[i].x > currentBoard.player.x && 
+						 currentBoard.obstacles[i].x < (currentBoard.player.x + currentBoard.player.dim) ) {
+						playerWillBeBlocked = true;
+						break;
+					}
+				}
+				console.log(playerWillBeBlocked);
+				
+				if (playerWillBeBlocked) {
+					currentBoard.player.row = startingRow;
+				} else {
+					currentBoard.playerBlocked = false;
+					currentBoard.redraw();
+				}
+			
+			
+			}
+			
+			
 		});
     }
 	
