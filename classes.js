@@ -95,6 +95,11 @@ class Board {
 		
 		//Redraw enemies, players, and obstacles
         this.player.redraw();
+		
+		// Check randTimer; if time elapsed add new enemy/obstacle
+		this.enemies.push(new Enemy());
+		this.obstacles.push(new Obstacle());
+
         for ( let i=0; i < this.enemies.length; i++ ) {
 			this.ctx.clearRect(this.enemies[i].x, 
 				this.enemies[i].row * this.enemies[i].rowHeight + 2.5,
