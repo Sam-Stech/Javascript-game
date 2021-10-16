@@ -1,18 +1,30 @@
 const NUM_ROWS = 3;
+minRandTime = 2000;	// 2000 ms = 2 s
+maxRandTime = 7000;	// 7000 ms = 7 s
 
 // Class: Board
 // Description: Represents the entire board. Keeps track of the current game
 class Board {
     constructor() {
+		// Canvas related variables
 		this.width = $("#canvas").get()[0].width; //Width of the board is equal to width of canvas
 		this.rowHeight = $("#canvas").get()[0].height / 3;
+		this.ctx = $("#canvas").get([0]).getContext("2d");
+
+		// Game play related variables
+		this.gameOver = false;
+
+		// Player related init variables
 		this.player = new Player(1); // Single player object on the board
-		console.log(this.player.row);
+		this.playerBlocked = false;
+
+		// Non-player related init variables
 		this.enemies = [new Enemy()]; // list of enemies currently on the board
         this.obstacles = [new Obstacle()]; // list of obstacles currently on the board
-		this.gameOver = false;
-		this.playerBlocked = false;
-		this.ctx = $("#canvas").get([0]).getContext("2d");
+		this.enemyInitTime = new Date().getTime();	// Getting the current time to track for enemy generation
+		this.enemyGenTime = Math.floor(Math.random() * (maxRandTime - minRandTime + 1) + minRandTime),	// Generate random time between 2 and 7 s
+		this.obstacleInitTime = new Date().getTime();	// Getting the current time to track for obstacle generation
+		this.obstacleGenTime = Math.floor(Math.random() * (maxRandTime - minRandTime + 1) + minRandTime),	// Generate random time between 2 and 7 s
 
         // draw the board
         this.redraw();
@@ -57,11 +69,7 @@ class Board {
 					currentBoard.playerBlocked = false;
 					currentBoard.redraw();
 				}
-			
-			
 			}
-			
-			
 		});
     }
 	
@@ -74,8 +82,35 @@ class Board {
 	
 	//Function: addEnemy
 	//Description: adds the given enemy to the boards enemy list
-	addEnemy(enemy) {
-		this.push(enemy);
+	addEnemy() {
+		this.enemies.push(new Enemy());
+	}
+
+	//Function: addObstacle
+	//Description: adds the given enemy to the boards enemy list
+	addObstacle() {
+		this.obstacles.push(new Obstacle());
+	}
+
+	//Function: timeCheck
+	//Description: determines if a new enemy/obstacle should be added to the board
+	timeCheck() {
+		// Get current timestamp
+		this.currTime = new Date().getTime();
+
+		// Checking to see if the time has elapsed to generate a new enemy to put on the board
+		if (this.currTime - this.enemyInitTime > this.enemyGenTime) {
+			this.addEnemy();		// Adding the new enemy
+			this.enemyInitTime = new Date().getTime();	// Getting the current time to track for enemy generation
+			this.enemyGenTime = Math.floor(Math.random() * (maxRandTime - minRandTime + 1) + minRandTime);	// Random time for enemy generation 
+		}
+
+		// Checking to see if the time has elapsed to generate a new obstacle to put on the board
+		if (this.currTime - this.obstacleInitTime > this.obstacleGenTime) {
+			this.addObstacle();		// Adding the new obstacle
+			this.obstacleInitTime = new Date().getTime();	// Getting the current time to track for obstacle generation
+			this.obstacleGenTime = Math.floor(Math.random() * (maxRandTime - minRandTime + 1) + minRandTime);	// Random time for obstacle generation
+		}
 	}
 
     // Function: redraw
@@ -96,9 +131,7 @@ class Board {
 		//Redraw enemies, players, and obstacles
         this.player.redraw();
 		
-		// Check randTimer; if time elapsed add new enemy/obstacle
-		this.enemies.push(new Enemy());
-		this.obstacles.push(new Obstacle());
+		this.timeCheck();
 
         for ( let i=0; i < this.enemies.length; i++ ) {
 			this.ctx.clearRect(this.enemies[i].x, 
@@ -229,7 +262,6 @@ class Enemy extends NonPlayer {
     constructor() {
 		let possibleImages = [document.getElementById("enemy1")];
         let enemyImage = possibleImages[Math.floor((Math.random() * (possibleImages.length)))];
-
         super( enemyImage );
 		this.velocity = -0.08;
     }
