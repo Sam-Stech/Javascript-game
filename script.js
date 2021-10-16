@@ -15,7 +15,7 @@ $(document).ready(function() {
 	var lastFrameTimeMs = 0,
 		maxFPS = 60,
 		delta = 0,
-		timestep = 1000 / 60; // We want to simulate 1000 ms / 60 FPS = 16.667 ms per frame every time we run update()
+		timestep = 1000 / 60 // We want to simulate 1000 ms / 60 FPS = 16.667 ms per frame every time we run update()
 
 	// Make the board
 	let board = new Board();
@@ -46,6 +46,7 @@ $(document).ready(function() {
 				break; // bail out
 			}
 		}
+
 		// Redraw the board
 		board.redraw();
 
@@ -54,6 +55,7 @@ $(document).ready(function() {
 			requestAnimationFrame(gameLoop);
 		}
 	}
+
 	// Function: panic
 	// Description: Enter this function if the catching up on missed frames is taking too long
 	//				This usually means we've entered a 'spiral of death' on updating frames...
