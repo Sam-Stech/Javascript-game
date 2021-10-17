@@ -157,7 +157,7 @@ class Board {
 		this.ctx.fillText(score, this.width - 10 - metrics.width, 20);
 		if (!this.playerBlocked) {
 			this.playerScore += 1;
-		} else {
+		} else if (this.playerScore > 0) {
 			this.playerScore -= 1;
 		}
     }
