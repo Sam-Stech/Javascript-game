@@ -33,6 +33,14 @@ function startGame() {
 
 	// Make the board
 	let board = new Board();
+
+	// Make a listener for 'play again' button
+	$("#playAgainButton").click(function() {
+		board.startGame();
+		requestAnimationFrame(gameLoop);
+	});
+
+	// Start the game loop
 	requestAnimationFrame(gameLoop);
 	
 	// Function: gameLoop
@@ -67,6 +75,9 @@ function startGame() {
 		// Loop if the game is still going
 		if ( !board.gameOver ) {
 			requestAnimationFrame(gameLoop);
+		}
+		else {
+			board.showGameOver();
 		}
 	}
 

@@ -83,4 +83,38 @@ li::first-letter {      /* Styling the first letter */
 	left: 0;
 	position: absolute;
 	z-index: 1;
+	top:0; 
+	left:0;
+	position:absolute;
+	z-index:1;
+}
+
+#gameOverScreen {
+	position: fixed;
+	z-index: 100;
+	background-color: white;
+	padding: 3em;
+	width: 20%;
+	border: 8px double blue;
+	border-radius: 10px;
+	left: 35%;
+	top: 20%;
+	
+	font-size: 1.5em;
+	visibility: hidden;
+}
+#gameOverScreen > h1 {
+	color: red;
+}
+
+#playAgainButton {
+	background-color: blue;
+	border: none;
+	color: white;
+	padding: 15px 32px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	cursor: pointer;
+	border-radius: 5px;
 }
