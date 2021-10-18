@@ -11,21 +11,22 @@ class Board {
 		this.rowHeight = $("#canvas").get()[0].height / 3;
 		this.ctx = $("#canvas").get([0]).getContext("2d");
 
-		// Game play related variables
-		this.gameOver = false;
+		// // Game play related variables
+		// this.gameOver = false;
 
-		// Player related init variables
-		this.player = new Player(1); // Single player object on the board
-		this.playerBlocked = false;
+		// // Player related init variables
+		// this.player = new Player(1); // Single player object on the board
+		// this.playerBlocked = false;
 
-		// Non-player related init variables
-		this.enemies = [new Enemy()]; // list of enemies currently on the board
-        this.obstacles = [new Obstacle()]; // list of obstacles currently on the board
-		this.enemyInitTime = new Date().getTime();	// Getting the current time to track for enemy generation
-		this.enemyGenTime = Math.floor(Math.random() * (maxRandTime - minRandTime + 1) + minRandTime),	// Generate random time between 2 and 7 s
-		this.obstacleInitTime = new Date().getTime();	// Getting the current time to track for obstacle generation
-		this.obstacleGenTime = Math.floor(Math.random() * (maxRandTime - minRandTime + 1) + minRandTime),	// Generate random time between 2 and 7 s
-		this.playerScore = 0;
+		// // Non-player related init variables
+		// this.enemies = [new Enemy()]; // list of enemies currently on the board
+        // this.obstacles = [new Obstacle()]; // list of obstacles currently on the board
+		// this.enemyInitTime = new Date().getTime();	// Getting the current time to track for enemy generation
+		// this.enemyGenTime = Math.floor(Math.random() * (maxRandTime - minRandTime + 1) + minRandTime),	// Generate random time between 2 and 7 s
+		// this.obstacleInitTime = new Date().getTime();	// Getting the current time to track for obstacle generation
+		// this.obstacleGenTime = Math.floor(Math.random() * (maxRandTime - minRandTime + 1) + minRandTime),	// Generate random time between 2 and 7 s
+		// this.playerScore = 0;
+        this.startGame();
 
         // draw the board
         this.redraw();
@@ -78,7 +79,25 @@ class Board {
 	//Begins the animation and creates the necessary event handlers.
 	startGame() {
 		console.log("Started game");
-		this.redraw();	
+        // Clear the canvas
+        this.ctx.clearRect(0,0, $("#canvas").get([0]).width, $("#canvas").get([0]).height);
+		$("#gameOverScreen").css("visibility", "hidden");
+
+        // Game play related variables
+        this.gameOver = false;
+
+        // Player related init variables
+        this.player = new Player(1); // Single player object on the board
+        this.playerBlocked = false;
+
+        // Non-player related init variables
+        this.enemies = [new Enemy()]; // list of enemies currently on the board
+        this.obstacles = [new Obstacle()]; // list of obstacles currently on the board
+        this.enemyInitTime = new Date().getTime();	// Getting the current time to track for enemy generation
+        this.enemyGenTime = Math.floor(Math.random() * (maxRandTime - minRandTime + 1) + minRandTime),	// Generate random time between 2 and 7 s
+        this.obstacleInitTime = new Date().getTime();	// Getting the current time to track for obstacle generation
+        this.obstacleGenTime = Math.floor(Math.random() * (maxRandTime - minRandTime + 1) + minRandTime),	// Generate random time between 2 and 7 s
+        this.playerScore = 0;
 	}
 	
 	//Function: addEnemy
@@ -160,6 +179,13 @@ class Board {
 		} else if (this.playerScore > 0) {
 			this.playerScore -= 1;
 		}
+    }
+
+    // Function: showGameOver
+    // Description: Called when the game is over. Shows the game over screen and asks the user if they want to play again
+    showGameOver() {
+        $("#scoreSlot").text(this.playerScore.toString());
+		$("#gameOverScreen").css("visibility", "visible");
     }
 
 	// Function: update
