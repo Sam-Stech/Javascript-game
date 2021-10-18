@@ -1,4 +1,18 @@
 $(document).ready(function() {
+	$("#container").hide();
+	$("#instructions").hide();
+});
+
+function displayInstructions () {
+	$("#start").hide();
+	$("#instructions").show();
+}
+
+function startGame() {
+	$("#start").hide();
+	$("#instructions").hide();
+	$("#container").show();
+
 	// Set the dimensions of the canvas
 	let canvasWidth = window.innerWidth - 50;
 	let canvasHeight = window.innerHeight - 50;
@@ -73,4 +87,4 @@ $(document).ready(function() {
 	function panic() {
 		delta = 0;
 	}
-});
+}

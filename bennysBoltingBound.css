@@ -1,21 +1,88 @@
+:root {
+	--primary-color: #a7a8a8;
+	--secondary-color: #4a4e55;
+	--heading-color: #941305;
+	--font-color: #303030;
+	--accent-color1: #cc2c11;
+	--accent-color2: #145b9c;
+	--accent-color3: #092b4b;
+	--accent-color4: #ffa500;
+} 
+
 body {
     text-align: center;
+	background-color: black;
+	background-size:cover;
 }
-#container{
+
+#start, #instructions {
+	display: block;
+	margin: 4rem;
+	border-radius: 25px;
+	font-family: Luminari, fantasy;
+	font-size: 20pt;
+	color: var(--heading-color);
+}
+
+h1 {
+	font-size: 40pt;
+	/* text-shadow: 0 0 5px #ffa500, 0 0 15px #ffa500, 0 0 20px #ffa500, 0 0 40px #ffa500, 0 0 60px #ff0000, 0 0 10px #ff8d00, 0 0 98px #ff0000; */
+	text-shadow: 0 0 5px silver, 0 0 15px silver, 0 0 20px silver, 0 0 40px silver, 0 0 60px blue, 0 0 10px silver, 0 0 98px #ff0000;
+
+}
+
+#benny {
+	display: block;
+	margin: auto;	
+}
+
+button {
+    margin: relative;
+	margin-top: 8em;
+	margin-left: 90%;
+    font-size: 20px;
+    font-weight: bold;
+	font-family: Luminari, fantasy;
+    width: 100px;
+    height: 50px;
+    padding: 15px;
+	background: var(--heading-color);
+    color: black;
+	border-radius: 3em;
+    border: none;
+    cursor: pointer;
+    text-align: center; 
+}
+
+.gamePlay {
+	list-style-type: none;
+}
+
+li::first-letter {      /* Styling the first letter */
+    color: silver;
+    font-size: xx-large;
+}
+
+#container {
     margin: 0 auto;
 	padding: 0px;
-    position:relative; 
+    position: relative; 
 }
 
 #canvas {
     border: 1px solid black;
-	top:0; 
-	left:0;
-	position:relative;
-	/* margin-right:300px; */
-    z-index:20;
+	top: 0; 
+	left: 0;
+	position: relative;
+	margin-right: 300px;
+    z-index: 20;
 }
+
 #background{
+	top: 0; 
+	left: 0;
+	position: absolute;
+	z-index: 1;
 	top:0; 
 	left:0;
 	position:absolute;
@@ -39,6 +106,7 @@ body {
 #gameOverScreen > h1 {
 	color: red;
 }
+
 #playAgainButton {
 	background-color: blue;
 	border: none;
