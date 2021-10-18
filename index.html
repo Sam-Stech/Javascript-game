@@ -8,6 +8,21 @@
     <link rel="stylesheet" href="bennysBoltingBound.css">
 </head>
 <body>
+    <section id="start" class="start">
+        <h1>Benny's Bolting Bound</h1>
+        <img id="benny" src="images/benny.png" width="200"></img>
+        <button id="startButton" onclick="displayInstructions()">Next</button>
+    </section>
+    <section id="instructions">
+        <h1>How to play:</h1>
+        <ul class="gamePlay">
+            <li>Avoid enemies and obstacles by moving Benny up and down.</li>
+            <li>Move Benny with the up and down arrow keys.</li>
+            <li>If you get hit by enemies or obstacles, your health will decline.</li>
+            <li>Try to go as long as possible to get the game's high score!</li>
+        </ul>
+        <button id="startGame" onclick="startGame()">Begin!</button>
+    </section>
 	<div id="container">
 		<canvas id="canvas" style="display:none;">Browser does not support canvas</canvas>
 		<img id="background" src="images/background.jpg" alt=""></img>
