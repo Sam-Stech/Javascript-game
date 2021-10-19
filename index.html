@@ -19,20 +19,23 @@
             <li>Avoid enemies and obstacles by moving Benny up and down.</li>
             <li>Move Benny with the up and down arrow keys.</li>
             <li>If you get hit by enemies or obstacles, your health will decline.</li>
-            <li>Try to go as long as possible to get the game's high score!</li>
+            <li>Try to play for as long as possible to get the high score!</li>
         </ul>
         <button id="startGame" onclick="startGame()">Begin!</button>
     </section>
-    <div id="gameOverScreen">
-        <h1>Game Over!</h1>
-        <p>Score: <span id="scoreSlot"></span></p>
-        <button type="button" id="playAgainButton">Play Again?</button>
-    </div>
-	<div id="container">
-		<canvas id="canvas" style="display:none;">Browser does not support canvas</canvas>
-		<img id="background" src="images/background.jpg" alt=""></img>
-    </div>
-	<img id="wall" src="images/wall.png" alt="" style="display:none;"></img>
+    <section>
+        <div id="container">
+            <canvas id="canvas" style="display:none;">Browser does not support canvas</canvas>
+            <img id="background" src="images/galaxy.jpg" alt=""></img>
+        </div>
+        <div id="gameOverScreen">
+            <h1>Game Over!</h1>
+            <p>High Score: <span id="highScore"></span></p>
+            <p>Your Score: <span id="scoreSlot"></span></p>
+            <button type="button" id="playAgainButton">Play Again</button>
+        </div>
+    </section>
+	<img id="wall" src="images/wall.jpeg" alt="" style="display:none;"></img>
 	<img id="enemy1" src="images/enemy1.png" style="display:none;"></img>
 	<img id="benny" src="images/benny.png" style="display:none;"></img>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>

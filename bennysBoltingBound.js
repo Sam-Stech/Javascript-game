@@ -1,6 +1,7 @@
 $(document).ready(function() {
 	$("#container").hide();
 	$("#instructions").hide();
+	$("#gameTitle").hide();
 });
 
 function displayInstructions () {
@@ -12,6 +13,7 @@ function startGame() {
 	$("#start").hide();
 	$("#instructions").hide();
 	$("#container").show();
+	$("#gameTitle").hide();
 
 	// Set the dimensions of the canvas
 	let canvasWidth = window.innerWidth - 50;
