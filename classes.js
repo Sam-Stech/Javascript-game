@@ -41,8 +41,8 @@ class Board {
 				//Check if the player will be blocked in their new row.
 				for ( let i=0; i < currentBoard.obstacles.length; i++ ) {
 					if ( currentBoard.obstacles[i].row == currentBoard.player.row &&
-						 currentBoard.obstacles[i].x > currentBoard.player.x && 
-						 currentBoard.obstacles[i].x < (currentBoard.player.x + currentBoard.player.dim) ) {
+						 currentBoard.obstacles[i].x + currentBoard.obstacles[i].dim > currentBoard.player.x && 
+						 currentBoard.obstacles[i].x < (currentBoard.player.x + currentBoard.player.dim - 5) ) {
 						playerWillBeBlocked = true;
 						break;
 					}
@@ -139,7 +139,6 @@ class Board {
 			this.ctx.clearRect(this.enemies[i].x, 
 				this.enemies[i].row * this.enemies[i].rowHeight + 2.5,
 				this.enemies[i].dim + 3, this.enemies[i].dim);
-			this.enemies[i].x-=10;
             this.enemies[i].redraw();
         }
 		for ( let i=0; i < this.obstacles.length; i++ ) {
@@ -197,6 +196,7 @@ class Board {
 		// Update the non-players... and check if they now have a collision or are out of bounds
 		// Update Enemies:
 		var enemiesToDelete = [];
+		console.log("updating enemies");
 		for ( let i=0; i < this.enemies.length; i++ ) {
 			this.enemies[i].update(delta);
 
