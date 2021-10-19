@@ -10,22 +10,6 @@ class Board {
 		this.width = $("#canvas").get()[0].width; //Width of the board is equal to width of canvas
 		this.rowHeight = $("#canvas").get()[0].height / 3;
 		this.ctx = $("#canvas").get([0]).getContext("2d");
-
-		// // Game play related variables
-		// this.gameOver = false;
-
-		// // Player related init variables
-		// this.player = new Player(1); // Single player object on the board
-		// this.playerBlocked = false;
-
-		// // Non-player related init variables
-		// this.enemies = [new Enemy()]; // list of enemies currently on the board
-        // this.obstacles = [new Obstacle()]; // list of obstacles currently on the board
-		// this.enemyInitTime = new Date().getTime();	// Getting the current time to track for enemy generation
-		// this.enemyGenTime = Math.floor(Math.random() * (maxRandTime - minRandTime + 1) + minRandTime),	// Generate random time between 2 and 7 s
-		// this.obstacleInitTime = new Date().getTime();	// Getting the current time to track for obstacle generation
-		// this.obstacleGenTime = Math.floor(Math.random() * (maxRandTime - minRandTime + 1) + minRandTime),	// Generate random time between 2 and 7 s
-		// this.playerScore = 0;
         this.startGame();
 
         // draw the board
@@ -63,7 +47,6 @@ class Board {
 						break;
 					}
 				}
-				console.log(playerWillBeBlocked);
 				
 				if (playerWillBeBlocked) {
 					currentBoard.player.row = startingRow;
@@ -78,7 +61,6 @@ class Board {
 	//Function: startGame
 	//Begins the animation and creates the necessary event handlers.
 	startGame() {
-		console.log("Started game");
         // Clear the canvas
         this.ctx.clearRect(0,0, $("#canvas").get([0]).width, $("#canvas").get([0]).height);
 		$("#gameOverScreen").css("visibility", "hidden");
@@ -136,7 +118,6 @@ class Board {
     // Function: redraw
     // Description: Redraws the entire board. Called whenever something moves
     redraw() {
-		// console.log("Redrawing");
 		//Draw the first dividing line
 		this.ctx.beginPath();
 		this.ctx.moveTo(0, this.rowHeight);
@@ -185,6 +166,21 @@ class Board {
     showGameOver() {
         $("#scoreSlot").text(this.playerScore.toString());
 		$("#gameOverScreen").css("visibility", "visible");
+
+		// Setting the local high score if there is a new high score
+		var highscore = localStorage.getItem("#highScore") ? localStorage.getItem("#highScore") : null;
+		if(highscore !== null){
+			if (this.playerScore > highscore) {
+				$("#highScore").text(this.playerScore.toString());
+				highscore = this.playerScore;     
+				localStorage.setItem("#highScore", this.playerScore);
+			}
+			$("#highScore").text(this.highscore);
+		}
+		else{
+			$("#highScore").text(this.playerScore.toString());
+			localStorage.setItem("#highScore", this.playerScore);
+		}
     }
 
 	// Function: update
@@ -272,10 +268,8 @@ class Entity {
 // Description: Represents the player unit on the board
 class Player extends Entity {
     constructor(startingPath) {
-		console.log("called player constructor.");
         super(document.getElementById("benny"), startingPath);
 		this.x = 0;
-		console.log(this.row);
     }
 }
 
