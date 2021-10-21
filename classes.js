@@ -1,6 +1,6 @@
 const NUM_ROWS = 3;
-minRandTime = 3000;	// 2000 ms = 2 s
-maxRandTime = 7000;	// 7000 ms = 7 s
+minRandTime = 7000;	// 2000 ms = 2 s
+maxRandTime = 10000;	// 7000 ms = 7 s
 
 // Class: Board
 // Description: Represents the entire board. Keeps track of the current game
@@ -198,6 +198,9 @@ class Board {
 		var enemiesToDelete = [];
 		console.log("updating enemies");
 		for ( let i=0; i < this.enemies.length; i++ ) {
+			this.ctx.clearRect(this.enemies[i].x, 
+				this.enemies[i].row * this.enemies[i].rowHeight + 2.5,
+				this.enemies[i].dim + 3, this.enemies[i].dim);
 			this.enemies[i].update(delta);
 
 			// Collision Check
@@ -222,6 +225,9 @@ class Board {
 		// Update Obstacles:
 		var obstaclesToDelete = [];
 		for ( let i=0; i < this.obstacles.length; i++ ) {
+			this.ctx.clearRect(this.obstacles[i].x, 
+				this.obstacles[i].row * this.obstacles[i].rowHeight + 2.5,
+				this.obstacles[i].dim + 3, this.obstacles[i].dim);
 			this.obstacles[i].update(delta);
 
 			// Collision Check
@@ -287,6 +293,7 @@ class NonPlayer extends Entity {
 	// Description: updates the position of the entity based on delta and its velocity
 	update(delta) {
 		this.x += this.velocity * delta;
+		this.velocity -= delta * 0.000001;
 	}
 }
 
@@ -297,7 +304,7 @@ class Enemy extends NonPlayer {
 		let possibleImages = [document.getElementById("enemy1")];
         let enemyImage = possibleImages[Math.floor((Math.random() * (possibleImages.length)))];
         super( enemyImage );
-		this.velocity = -0.08;
+		this.velocity = -0.3;
     }
 }
 
@@ -308,6 +315,6 @@ class Obstacle extends NonPlayer {
         let possibleImages = [document.getElementById("wall")];
         let obstacleImage = possibleImages[Math.floor((Math.random() * (possibleImages.length)))];
         super( obstacleImage );
-		this.velocity = -0.08;
+		this.velocity = -0.1;
     }
 }
