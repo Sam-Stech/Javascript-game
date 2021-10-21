@@ -1,5 +1,5 @@
 const NUM_ROWS = 3;
-minRandTime = 2000;	// 2000 ms = 2 s
+minRandTime = 3000;	// 2000 ms = 2 s
 maxRandTime = 7000;	// 7000 ms = 7 s
 
 // Class: Board
