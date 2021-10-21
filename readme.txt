@@ -14,7 +14,7 @@ Collisions were handled so that there are implications if an enemy or obstacle r
 If an enemy runs into the character, then the game is over. If an obstacle runs into the character, then the game score decreases. 
 This is significant in our design because it was time consuming to create implications that are dependant upon the specific object type. 
 
-* Creating a game that could infinately run
+* Creating a game that could infinitely run
 It was slightly challenging to figure out how to have the gameboard redrawn frequently, as well as determining how often this needed to be updated to create the "moving" appearance of the board. 
 
 This was a challenge for the team because there was the need to allow for certain events to occur with a time aspect rather than what we have mainly used in class by utilizing user interaction.
